@@ -1,0 +1,54 @@
+# Terraform dirs & state
+.terraform/
+*.tfstate
+*.tfstate.*
+.tfstate.d/
+crash.log
+crash.*.log
+
+# Plans
+*.tfplan
+*.plan
+
+# Vars (often secrets) — keep a sample checked in
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+!terraform.tfvars.example
+
+# Local overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI config (user-specific)
+.terraformrc
+terraform.rc
+
+terraform-key.json
+
+# Env files
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & temp
+*.log
+logs/
+*.tmp
+*.temp
+
+.terragrunt-cache/
+terragrunt-debug.tfvars.json
