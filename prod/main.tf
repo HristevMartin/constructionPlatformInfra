@@ -86,7 +86,7 @@ module "frontend_management" {
   depends_on = [module.networking]
 }
 
-# BACKEND SERVICE (API - Connects to MongoDB)
+# BACKEND SERVICE (API -s Connects to MongoDB)
 module "backend" {
   source = "../modules/cloud-run"
   
