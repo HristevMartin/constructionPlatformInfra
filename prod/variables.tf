@@ -18,18 +18,20 @@ variable "mongo_region" {
 variable "frontend_simple_image_name" {
   description = "Container image for the simple frontend service"
   type        = string
+  default     = "gcr.io/pure-zoo-466316-t4/frontend-simple:latest"
 }
 
 variable "frontend_management_image_name" {
   description = "Container image for the management frontend service"
   type        = string
-  default     = "gcr.io/stalwart-elixir-458022-d5/managementui2:latest"
+  default     = "gcr.io/pure-zoo-466316-t4/managementui2:v1.0.1"
+                
 }
 
 variable "backend_image_name" {
   description = "Container image for the backend service"
   type        = string
-  default     = "gcr.io/stalwart-elixir-458022-d5/demo-construction-backend:latest"
+  default     = "gcr.io/pure-zoo-466316-t4/demo-construction-backend:latest"
 }
 
 variable "secret_key" {
