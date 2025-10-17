@@ -3,10 +3,6 @@ output "frontend_simple_service_url" {
   value       = module.frontend_simple.service_url
 }
 
-output "frontend_management_service_url" {
-  description = "URL of the management frontend service"
-  value       = module.frontend_management.service_url
-}
 
 output "backend_service_url" {
   description = "URL of the backend service"
