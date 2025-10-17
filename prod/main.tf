@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "pure-zoo-terraform-state"
+    bucket = "regal-framework-terraform-state"
     prefix = "prod/terraform.tfstate"
   }
 }
@@ -69,22 +69,6 @@ module "frontend_simple" {
   depends_on = [module.networking]
 }
 
-# FRONTEND SERVICE #2 (Management - With MongoDB Access)
-module "frontend_management" {
-  source = "../modules/cloud-run"
-
-  project_id         = var.project_id
-  region             = var.region
-  app_name           = "trade-harmony-frontend-management"
-  image_name         = var.frontend_management_image_name
-  vpc_connector_name = module.networking.frontend_management_connector_name
-
-  env_vars = {
-    NODE_ENV = "production"
-  }
-
-  depends_on = [module.networking]
-}
 
 # BACKEND SERVICE (API -s Connects to MongoDB)
 module "backend" {
@@ -102,6 +86,11 @@ module "backend" {
     MONGO_DB   = "travelDB"                
     SECRET_KEY = var.secret_key
     FLASK_ENV  = "production"
+    SENDGRID_API_KEY = var.sendgrid_api_key
+    APP_BASE_URL = "https://trade-harmony.regal-framework.com"
+    FRONTEND_BASE_URL = "https://trade-harmony.regal-framework.com"
+    STRIPE_SECRET_KEY = var.stripe_secret_key
+    OPENAI_API_KEY = var.OPENAI_API_KEY
   }
 
   depends_on = [module.networking, module.mongodb]

@@ -39,3 +39,21 @@ variable "secret_key" {
   type        = string
   sensitive   = true
 }
+
+variable "sendgrid_api_key" {
+  description = "SendGrid API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "stripe_secret_key" {
+  description = "Stripe secret key"
+  type        = string
+  sensitive   = true
+}
+
+variable "OPENAI_API_KEY" {
+  description = "OpenAI API key"
+  type        = string
+  sensitive   = true
+}
