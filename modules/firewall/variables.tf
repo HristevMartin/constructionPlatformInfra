@@ -17,7 +17,7 @@ variable "enable_mongodb_rules" {
 variable "mongodb_source_ranges" {
   description = "Source IP ranges for MongoDB access"
   type        = list(string)
-  default     = ["10.0.0.0/16"]
+  default     = ["35.235.240.0/20"]
 }
 
 variable "internal_source_ranges" {

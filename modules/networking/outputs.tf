@@ -23,10 +23,6 @@ output "frontend_simple_connector_name" {
   value       = google_vpc_access_connector.frontend_simple_connector.name
 }
 
-output "frontend_management_connector_name" {
-  description = "Name of the management frontend VPC connector"
-  value       = google_vpc_access_connector.frontend_management_connector.name
-}
 
 output "backend_connector_name" {
   description = "Name of the backend VPC connector"
