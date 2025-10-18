@@ -1,12 +1,12 @@
 # .github/workflows/deploy.yml
-# constructionPlatformInfra
+# Place this file in: constructionPlatformInfra/.github/workflows/deploy.yml
 
 name: Terraform Deploy Backend
 
 on:
   repository_dispatch:
     types: [deploy-backend]
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual trigger
     inputs:
       image:
         description: 'Full Docker image path'
@@ -22,15 +22,15 @@ env:
   TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_SENDGRID_API_KEY }}
   TF_VAR_stripe_secret_key: ${{ secrets.TF_VAR_STRIPE_SECRET_KEY }}
   TF_VAR_OPENAI_API_KEY: ${{ secrets.TF_VAR_OPENAI_API_KEY }}
-  GOOGLE_APPLICATION_CREDENTIALS: $HOME/gcp-sa.json
 
 jobs:
   terraform-deploy:
     runs-on: ubuntu-latest
+    
     permissions:
       contents: read
-      id-token: write   # harmless to keep, not required with JSON auth
-
+      id-token: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,28 +46,11 @@ jobs:
           echo "backend_image=${IMAGE}" >> $GITHUB_OUTPUT
           echo "🐳 Deploying image: ${IMAGE}"
 
-      # Optional: sanity check
-      - name: Check SA key presence (length only)
-        run: echo "GCP_SA_KEY length: ${#GCP_SA_KEY}"
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-
-      # Manual auth using Service Account JSON key
-      - name: Write SA key to file
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > $HOME/gcp-sa.json
-          if [ ! -s "$HOME/gcp-sa.json" ]; then
-            echo "❌ GCP_SA_KEY is empty"; exit 1;
-          fi
-          jq -e .type $HOME/gcp-sa.json >/dev/null || { echo "❌ GCP_SA_KEY is not valid JSON"; exit 1; }
-
       - name: Authenticate to Google Cloud
-        run: |
-          gcloud auth activate-service-account --key-file="$HOME/gcp-sa.json"
-          gcloud config set project "${{ env.TF_VAR_project_id }}"
-          gcloud auth list
-        env:
-          CLOUDSDK_CORE_DISABLE_PROMPTS: '1'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -83,13 +66,13 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./prod
-        env:
-          TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
         run: |
           terraform plan \
             -var="backend_image_name=${{ steps.image.outputs.backend_image }}" \
             -target=module.backend \
             -out=tfplan
+        env:
+          TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
 
       - name: Terraform Apply
         working-directory: ./prod
@@ -106,6 +89,7 @@ jobs:
       - name: Deployment Summary
         run: |
           echo "## Deployment Summary 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Image**: \`${{ steps.image.outputs.backend_image }}\`" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
             echo "- **Triggered by**: ${{ github.event.client_payload.actor }}" >> $GITHUB_STEP_SUMMARY
