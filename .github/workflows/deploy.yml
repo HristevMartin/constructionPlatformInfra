@@ -46,11 +46,23 @@ jobs:
           echo "backend_image=${IMAGE}" >> $GITHUB_OUTPUT
           echo "🐳 Deploying image: ${IMAGE}"
 
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      # Manual auth using Service Account JSON key
+      - name: Write SA key and authenticate
+        run: |
+          echo '${{ secrets.GCP_SA_KEY }}' > $HOME/gcp-sa.json
+          if [ ! -s "$HOME/gcp-sa.json" ]; then
+            echo "❌ GCP_SA_KEY is empty"; exit 1;
+          fi
+          jq -e .type $HOME/gcp-sa.json >/dev/null || { echo "❌ GCP_SA_KEY is not valid JSON"; exit 1; }
+          
+          # Authenticate
+          gcloud auth activate-service-account --key-file="$HOME/gcp-sa.json"
+          gcloud config set project "${{ secrets.TF_VAR_PROJECT_ID }}"
+          
+          # Set env var for Terraform
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcp-sa.json" >> $GITHUB_ENV
+        env:
+          CLOUDSDK_CORE_DISABLE_PROMPTS: '1'
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
