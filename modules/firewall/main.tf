@@ -24,6 +24,7 @@ resource "google_compute_firewall" "mongodb_firewall" {
     protocol = "tcp"
     ports    = ["27017"]
   }
+
   
   source_ranges = var.mongodb_source_ranges
   target_tags   = ["mongodb-server"]
