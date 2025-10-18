@@ -1,36 +1,12 @@
-# .github/workflows/deploy.yml
-# Place this file in: constructionPlatformInfra/.github/workflows/deploy.yml
-
-name: Terraform Deploy Backend
-
-on:
-  repository_dispatch:
-    types: [deploy-backend]
-  workflow_dispatch:  
-    inputs:
-      image:
-        description: 'Full Docker image path'
-        required: true
-        default: 'europe-west1-docker.pkg.dev/regal-framework-475315-m1/docker-repo/ub-travel-services-backend:latest'
-
-env:
-  TF_VAR_project_id: ${{ secrets.TF_VAR_PROJECT_ID }}
-  TF_VAR_region: ${{ secrets.TF_VAR_REGION }}
-  TF_VAR_mongo_region: ${{ secrets.TF_VAR_MONGO_REGION }}
-  TF_VAR_frontend_simple_image_name: ${{ secrets.TF_VAR_FRONTEND_SIMPLE_IMAGE_NAME }}
-  TF_VAR_secret_key: ${{ secrets.TF_VAR_SECRET_KEY }}
-  TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_SENDGRID_API_KEY }}
-  TF_VAR_stripe_secret_key: ${{ secrets.TF_VAR_STRIPE_SECRET_KEY }}
-  TF_VAR_OPENAI_API_KEY: ${{ secrets.TF_VAR_OPENAI_API_KEY }}
+# .github/workflows/deploy.yml  (constructionPlatformInfra)
 
 jobs:
   terraform-deploy:
     runs-on: ubuntu-latest
-    
     permissions:
       contents: read
-      id-token: write
-    
+      id-token: write   # harmless to keep, but not required with JSON auth
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,11 +22,16 @@ jobs:
           echo "backend_image=${IMAGE}" >> $GITHUB_OUTPUT
           echo "🐳 Deploying image: ${IMAGE}"
 
-      - name: Authenticate to Google Cloud
+      # (Optional) quick length check so you know the secret is present
+      - name: Check SA key presence (length only)
+        run: echo "GCP_SA_KEY length: ${#GCP_SA_KEY}"
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Authenticate to Google Cloud (JSON key)
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
@@ -66,13 +47,13 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ./prod
+        env:
+          TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
         run: |
           terraform plan \
             -var="backend_image_name=${{ steps.image.outputs.backend_image }}" \
             -target=module.backend \
             -out=tfplan
-        env:
-          TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
 
       - name: Terraform Apply
         working-directory: ./prod
@@ -89,7 +70,6 @@ jobs:
       - name: Deployment Summary
         run: |
           echo "## Deployment Summary 🚀" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Image**: \`${{ steps.image.outputs.backend_image }}\`" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
             echo "- **Triggered by**: ${{ github.event.client_payload.actor }}" >> $GITHUB_STEP_SUMMARY
