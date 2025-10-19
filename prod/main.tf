@@ -87,10 +87,11 @@ module "backend" {
     SECRET_KEY = var.secret_key
     FLASK_ENV  = "production"
     SENDGRID_API_KEY = var.sendgrid_api_key
-    APP_BASE_URL = "https://trade-harmony.regal-framework.com"
-    FRONTEND_BASE_URL = "https://trade-harmony.regal-framework.com"
+    APP_BASE_URL = "https://find-tradespeople.com"
+    FRONTEND_BASE_URL = "https://find-tradespeople.com"
     STRIPE_SECRET_KEY = var.stripe_secret_key
     OPENAI_API_KEY = var.OPENAI_API_KEY
+    COOKIE_DOMAIN = "find-tradespeople.com"
   }
 
   depends_on = [module.networking, module.mongodb]
