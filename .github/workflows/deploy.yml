@@ -93,7 +93,7 @@ jobs:
       - name: Get Backend URL
         working-directory: ./prod
         run: |
-          BACKEND_URL=$(terraform output -raw backend_url || echo "not available")
+          BACKEND_URL=$(terraform output -raw backend_service_url || echo "not available")
           echo "✅ Backend deployed successfully!"
           echo "🌐 Backend URL: ${BACKEND_URL}"
           echo "📦 Image: ${{ steps.image.outputs.backend_image }}"
