@@ -19,5 +19,4 @@ resource "google_compute_instance" "mongodb_vm" {
   
   tags = ["mongodb-server", "iap-ssh"]
   
-  metadata_startup_script = var.startup_script
 }

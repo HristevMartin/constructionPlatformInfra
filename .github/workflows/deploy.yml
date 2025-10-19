@@ -81,7 +81,7 @@ jobs:
         run: |
           terraform plan \
             -var="backend_image_name=${{ steps.image.outputs.backend_image }}" \
-            -target=module.backend \
+            -target=module.backend.google_cloud_run_service.service \
             -out=tfplan
         env:
           TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
