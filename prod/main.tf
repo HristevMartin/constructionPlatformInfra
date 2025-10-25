@@ -92,6 +92,7 @@ module "backend" {
     STRIPE_SECRET_KEY = var.stripe_secret_key
     OPENAI_API_KEY = var.OPENAI_API_KEY
     COOKIE_DOMAIN = "find-tradespeople.com"
+    GOOGLE_CLIENT_ID = var.google_client_id
   }
 
   depends_on = [module.networking, module.mongodb]

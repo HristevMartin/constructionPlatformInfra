@@ -6,7 +6,7 @@ name: Terraform Deploy Backend
 on:
   repository_dispatch:
     types: [deploy-backend]
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:  
     inputs:
       image:
         description: 'Full Docker image path'

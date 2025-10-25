@@ -57,3 +57,9 @@ variable "OPENAI_API_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "google_client_id" {
+  description = "Google Client ID"
+  type        = string
+  sensitive   = true
+}
