@@ -22,6 +22,7 @@ env:
   TF_VAR_sendgrid_api_key: ${{ secrets.TF_VAR_SENDGRID_API_KEY }}
   TF_VAR_stripe_secret_key: ${{ secrets.TF_VAR_STRIPE_SECRET_KEY }}
   TF_VAR_OPENAI_API_KEY: ${{ secrets.TF_VAR_OPENAI_API_KEY }}
+  TF_VAR_google_client_id: ${{ secrets.GOOGLE_CLIENT_ID }}
 
 jobs:
   terraform-deploy:
@@ -76,13 +77,25 @@ jobs:
         working-directory: ./prod
         run: terraform init
 
+      - name: Check and Remove Stale Lock
+        working-directory: ./prod
+        run: |
+          echo "=== Checking for stale Terraform locks ==="
+          gsutil ls gs://regal-framework-terraform-state/prod/terraform.tfstate/*.tflock 2>/dev/null && {
+            echo "⚠️  Found stale lock, removing..."
+            gsutil rm gs://regal-framework-terraform-state/prod/terraform.tfstate/*.tflock
+            echo "✅ Stale lock removed"
+          } || echo "✅ No stale locks found"
+        continue-on-error: true
+
       - name: Terraform Plan
         working-directory: ./prod
         run: |
           terraform plan \
             -var="backend_image_name=${{ steps.image.outputs.backend_image }}" \
             -target=module.backend.google_cloud_run_service.service \
-            -out=tfplan
+            -out=tfplan \
+            -lock-timeout=5m
         env:
           TF_VAR_backend_image_name: ${{ steps.image.outputs.backend_image }}
 
