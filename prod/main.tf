@@ -17,6 +17,12 @@ provider "google" {
   region  = var.region
 }
 
+# Enable Cloud Run API (shared across all Cloud Run services)
+resource "google_project_service" "cloud_run_api" {
+  service            = "run.googleapis.com"
+  disable_on_destroy = false
+}
+
 # SHARED NETWORKING INFRASTRUCTURE
 module "networking" {
   source = "../modules/networking"
@@ -61,6 +67,23 @@ module "frontend_simple" {
   app_name           = "trade-harmony-frontend-simple"
   image_name         = var.frontend_simple_image_name
   vpc_connector_name = module.networking.frontend_simple_connector_name
+
+  env_vars = {
+    NODE_ENV = "production"
+  }
+
+  depends_on = [module.networking]
+}
+
+
+module "frontend_portfolio" {
+  source = "../modules/cloud-run"
+
+  project_id         = var.project_id
+  region             = var.region
+  app_name           = "trade-harmony-frontend-portfolio"
+  image_name         = var.frontend_portfolio
+  vpc_connector_name = module.networking.frontend_portfolio_connector_name
 
   env_vars = {
     NODE_ENV = "production"

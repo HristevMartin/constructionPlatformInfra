@@ -54,6 +54,16 @@ resource "google_vpc_access_connector" "frontend_simple_connector" {
 }
 
 
+# VPC Connector for Frontend Portfolio
+resource "google_vpc_access_connector" "frontend_portfolio_connector" {
+  name          = "th-frontend-portfolio"
+  region        = var.region
+  ip_cidr_range = "10.8.1.0/28"
+  network       = google_compute_network.vpc_network.name
+  
+  depends_on = [google_project_service.vpcaccess_api]
+}
+
 # VPC Connector for Backend
 resource "google_vpc_access_connector" "backend_connector" {
   name          = "th-backend"

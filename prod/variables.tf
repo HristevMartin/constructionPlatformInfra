@@ -63,3 +63,9 @@ variable "google_client_id" {
   type        = string
   sensitive   = true
 }
+
+variable "frontend_portfolio" {
+  description = "Container image for the frontend portfolio service"
+  type        = string
+  default     = "europe-west1-docker.pkg.dev/regal-framework-475315-m1/docker-repo/martin_portfolio:v1"
+}
