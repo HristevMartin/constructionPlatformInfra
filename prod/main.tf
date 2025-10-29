@@ -17,6 +17,12 @@ provider "google" {
   region  = var.region
 }
 
+# Enable Cloud Run API (shared across all Cloud Run services)
+resource "google_project_service" "cloud_run_api" {
+  service            = "run.googleapis.com"
+  disable_on_destroy = false
+}
+
 # SHARED NETWORKING INFRASTRUCTURE
 module "networking" {
   source = "../modules/networking"
