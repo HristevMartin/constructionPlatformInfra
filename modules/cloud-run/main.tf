@@ -1,9 +1,3 @@
-# Enable Cloud Run API
-resource "google_project_service" "cloud_run_api" {
-  service            = "run.googleapis.com"
-  disable_on_destroy = false
-}
-
 resource "google_cloud_run_service" "service" {
   name     = var.app_name
   location = var.region
@@ -44,10 +38,6 @@ resource "google_cloud_run_service" "service" {
     percent         = 100
     latest_revision = true
   }
-  
-  depends_on = [
-    google_project_service.cloud_run_api
-  ]
 }
 
 resource "google_cloud_run_service_iam_member" "public_access" {
