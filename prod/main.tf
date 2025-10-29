@@ -70,6 +70,23 @@ module "frontend_simple" {
 }
 
 
+module "frontend_portfolio" {
+  source = "../modules/cloud-run"
+
+  project_id         = var.project_id
+  region             = var.region
+  app_name           = "trade-harmony-frontend-portfolio"
+  image_name         = var.frontend_portfolio
+  vpc_connector_name = module.networking.frontend_portfolio_connector_name
+
+  env_vars = {
+    NODE_ENV = "production"
+  }
+
+  depends_on = [module.networking]
+}
+
+
 # BACKEND SERVICE (API -s Connects to MongoDB)
 module "backend" {
   source = "../modules/cloud-run"
