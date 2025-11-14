@@ -94,6 +94,7 @@ jobs:
           terraform plan \
             -var="backend_image_name=${{ steps.image.outputs.backend_image }}" \
             -target=module.backend.google_cloud_run_service.service \
+            -target=module.redis \
             -out=tfplan \
             -lock-timeout=5m
         env:
