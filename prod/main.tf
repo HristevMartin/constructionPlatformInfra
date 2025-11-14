@@ -120,3 +120,22 @@ module "backend" {
 
   depends_on = [module.networking, module.mongodb]
 }
+
+
+module "redis" {
+  source = "../modules/redis"
+
+  project_id      = var.project_id
+  region          = var.region
+  redis_name      = "jobhub-redis"
+  tier            = "BASIC"
+  memory_size_gb  = 1
+  redis_version   = "REDIS_7_0"
+  display_name    = "JobHub Redis for Celery"
+  
+  labels = {
+    environment = var.environment
+    service     = "backend"
+    component   = "redis"
+  }
+}
