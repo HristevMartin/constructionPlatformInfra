@@ -18,5 +18,12 @@ resource "google_compute_instance" "mongodb_vm" {
   }
   
   tags = ["mongodb-server", "iap-ssh"]
+
+   lifecycle {
+    ignore_changes = [
+      metadata["ssh-keys"],
+      metadata_startup_script
+    ]
+  }
   
 }
