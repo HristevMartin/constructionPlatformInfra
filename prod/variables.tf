@@ -69,3 +69,9 @@ variable "frontend_portfolio" {
   type        = string
   default     = "europe-west1-docker.pkg.dev/regal-framework-475315-m1/docker-repo/martin_portfolio:v1"
 }
+
+variable "environment" {
+  description = "Environment name (production, staging, etc.)"
+  type        = string
+  default     = "production"
+}
