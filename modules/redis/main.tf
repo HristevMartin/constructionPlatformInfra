@@ -15,10 +15,8 @@ resource "google_redis_instance" "redis" {
   redis_version     = var.redis_version
   display_name      = var.display_name
   
-  # Connect to the default VPC network
-  authorized_network = "projects/${var.project_id}/global/networks/default"
-  
-  connect_mode = "DIRECT_PEERING"
+  authorized_network = "projects/${var.project_id}/global/networks/trade-harmony-vpc"
+  connect_mode       = "DIRECT_PEERING"
   
   labels = var.labels
 }
