@@ -116,9 +116,10 @@ module "backend" {
     OPENAI_API_KEY = var.OPENAI_API_KEY
     COOKIE_DOMAIN = "find-tradespeople.com"
     GOOGLE_CLIENT_ID = var.google_client_id
+    REDIS_URL = module.redis.connection_string
   }
 
-  depends_on = [module.networking, module.mongodb]
+  depends_on = [module.networking, module.mongodb, module.redis]
 }
 
 
