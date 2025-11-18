@@ -75,3 +75,15 @@ variable "environment" {
   type        = string
   default     = "production"
 }
+
+variable "backend_portfolio" {
+  description = "Container image for the backend portfolio service"
+  type        = string
+  default     = "europe-west1-docker.pkg.dev/regal-framework-475315-m1/docker-repo/cv-chatbot-api:v1.0.0"
+}
+
+variable "TYPESENSE_API_KEY" {
+  description = "Typesense API key"
+  type        = string
+  sensitive   = true
+}

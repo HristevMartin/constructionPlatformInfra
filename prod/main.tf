@@ -92,6 +92,39 @@ module "frontend_portfolio" {
   depends_on = [module.networking]
 }
 
+module "backend_portfolio" {
+  source = "../modules/cloud-run"
+
+  project_id         = var.project_id
+  region             = var.region
+  app_name           = "trade-harmony-backend-portfolio"
+  image_name         = var.backend_portfolio
+  vpc_connector_name = module.networking.backend_connector_name
+
+  env_vars = {
+    # OpenAI
+    OPENAI_API_KEY       = var.OPENAI_API_KEY
+    EMBEDDING_MODEL      = "text-embedding-3-large"
+    CHAT_MODEL          = "gpt-4o-mini"
+    
+    # Typesense (Your VM internal IP)
+    TYPESENSE_HOST      = "10.0.1.4"
+    TYPESENSE_PORT      = "8108"
+    TYPESENSE_PROTOCOL  = "http"
+    TYPESENSE_API_KEY   = var.TYPESENSE_API_KEY 
+    
+    # MongoDB (Your VM internal IP)
+    MONGODB_URI         = "mongodb://10.0.1.4:27017/" 
+    
+    # RAG Config
+    RAG_TOP_K           = "5"
+    RAG_MAX_DISTANCE    = "0.7"
+    CV_SOURCE           = "MH_CV.pdf"
+  }
+
+  depends_on = [module.networking]
+}
+
 
 # BACKEND SERVICE (API -s Connects to MongoDB)
 module "backend" {
