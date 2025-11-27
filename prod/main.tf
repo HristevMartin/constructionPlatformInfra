@@ -107,7 +107,7 @@ module "backend_portfolio" {
     EMBEDDING_MODEL      = "text-embedding-3-large"
     CHAT_MODEL          = "gpt-4o-mini"
     
-    # Typesense (Your VM internal IP)
+    # Typesense (Your VM internal IPs)
     TYPESENSE_HOST      = "10.0.1.4"
     TYPESENSE_PORT      = "8108"
     TYPESENSE_PROTOCOL  = "http"
