@@ -17,7 +17,7 @@ provider "google" {
   region  = var.region
 }
 
-# Enables Cloud Run API (shareds across all Cloud Run services)
+# Enables Cloud Run API (shareds across alsl Cloud Run services)
 resource "google_project_service" "cloud_run_api" {
   service            = "run.googleapis.com"
   disable_on_destroy = false
