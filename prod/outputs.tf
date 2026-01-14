@@ -19,8 +19,6 @@ output "network_name" {
   value       = module.networking.network_name
 }
 
-
-
 output "redis_host" {
   description = "Redis instance host IP"
   value       = module.redis.host

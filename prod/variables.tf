@@ -1,6 +1,7 @@
 variable "project_id" {
   description = "The Google Cloud project ID"
   type        = string
+  default     = "project-951fdfad-a8e3-4d4b-a1c"
 }
 
 variable "region" {
@@ -38,30 +39,35 @@ variable "secret_key" {
   description = "Secret key for Flask application"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "sendgrid_api_key" {
   description = "SendGrid API key"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "stripe_secret_key" {
   description = "Stripe secret key"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "OPENAI_API_KEY" {
   description = "OpenAI API key"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "google_client_id" {
   description = "Google Client ID"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "frontend_portfolio" {
@@ -86,4 +92,12 @@ variable "TYPESENSE_API_KEY" {
   description = "Typesense API key"
   type        = string
   sensitive   = true
+  default     = ""
+}
+
+
+variable "front_end_base_cv_llm_url" {
+  description = "Base URL for the frontend CV LLM"
+  type        = string
+  default     = ""
 }
