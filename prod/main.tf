@@ -7,7 +7,7 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "regal-framework-terraform-state"
+    bucket = "llm-terraform-state"
     prefix = "prod/terraform.tfstate"
   }
 }
@@ -42,6 +42,17 @@ module "firewall" {
   network_name         = module.networking.network_name
   enable_mongodb_rules = true
 
+  mongodb_source_ranges = [
+    "35.235.240.0/20",
+    "10.8.0.0/28",
+    "10.8.1.0/28",
+    "10.8.2.0/28"
+  ]
+
+  internal_source_ranges = [
+    "10.0.0.0/16"
+  ]
+
   depends_on = [module.networking]
 }
 
@@ -58,7 +69,7 @@ module "mongodb" {
   depends_on = [module.networking, module.firewall]
 }
 
-# FRONTEND SERVICE #1 (Simple - No MongoDB)
+# FRONTEND SERVICE - 3
 module "frontend_simple" {
   source = "../modules/cloud-run"
 
@@ -75,7 +86,7 @@ module "frontend_simple" {
   depends_on = [module.networking]
 }
 
-
+# - 4
 module "frontend_portfolio" {
   source = "../modules/cloud-run"
 
@@ -92,6 +103,7 @@ module "frontend_portfolio" {
   depends_on = [module.networking]
 }
 
+# - 2
 module "backend_portfolio" {
   source = "../modules/cloud-run"
 
@@ -108,13 +120,13 @@ module "backend_portfolio" {
     CHAT_MODEL          = "gpt-4o-mini"
     
     # Typesense (Your VM internal IPs)
-    TYPESENSE_HOST      = "10.0.1.4"
+    TYPESENSE_HOST      = "10.0.1.2"
     TYPESENSE_PORT      = "8108"
     TYPESENSE_PROTOCOL  = "http"
     TYPESENSE_API_KEY   = var.TYPESENSE_API_KEY 
     
     # MongoDB (Your VM internal IP)
-    MONGODB_URI         = "mongodb://10.0.1.4:27017/" 
+    MONGODB_URI         = "mongodb://10.0.1.2:27017/" 
     
     # RAG Config
     RAG_TOP_K           = "5"
@@ -126,7 +138,7 @@ module "backend_portfolio" {
 }
 
 
-# BACKEND SERVICE (API -s Connects to MongoDB)
+# BACKEND SERVICE - 1.
 module "backend" {
   source = "../modules/cloud-run"
 
