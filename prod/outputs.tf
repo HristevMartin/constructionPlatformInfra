@@ -19,18 +19,19 @@ output "network_name" {
   value       = module.networking.network_name
 }
 
-output "redis_host" {
-  description = "Redis instance host IP"
-  value       = module.redis.host
-}
-
-output "redis_port" {
-  description = "Redis instance port"
-  value       = module.redis.port
-}
-
-output "redis_connection_string" {
-  description = "Redis connection string"
-  value       = module.redis.connection_string
-  sensitive   = true
-}
+# Redis outputs disabled - Redis module commented out
+# output "redis_host" {
+#   description = "Redis instance host IP"
+#   value       = module.redis.host
+# }
+#
+# output "redis_port" {
+#   description = "Redis instance port"
+#   value       = module.redis.port
+# }
+#
+# output "redis_connection_string" {
+#   description = "Redis connection string"
+#   value       = module.redis.connection_string
+#   sensitive   = true
+# }
