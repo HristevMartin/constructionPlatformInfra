@@ -151,7 +151,7 @@ module "backend" {
   env_vars = {
     DB_HOST    = module.mongodb.internal_ip 
     DB_PORT    = "27017"                    
-    MONGO_DB   = "travelDB"                
+    MONGO_DB   = "tradeDB"                
     SECRET_KEY = var.secret_key
     FLASK_ENV  = "production"
     SENDGRID_API_KEY = var.sendgrid_api_key
@@ -161,27 +161,29 @@ module "backend" {
     OPENAI_API_KEY = var.OPENAI_API_KEY
     COOKIE_DOMAIN = "find-tradespeople.com"
     GOOGLE_CLIENT_ID = var.google_client_id
-    REDIS_URL = module.redis.connection_string
+    # REDIS_URL = module.redis.connection_string  # Disabled - Redis not needed for now
+    REDIS_URL = ""  # Empty for now
   }
 
-  depends_on = [module.networking, module.mongodb, module.redis]
+  depends_on = [module.networking, module.mongodb]  # module.redis commented out
 }
 
 
-module "redis" {
-  source = "../modules/redis"
-
-  project_id      = var.project_id
-  region          = var.region
-  redis_name      = "jobhub-redis"
-  tier            = "BASIC"
-  memory_size_gb  = 1
-  redis_version   = "REDIS_7_0"
-  display_name    = "JobHub Redis for Celery"
-  
-  labels = {
-    environment = var.environment
-    service     = "backend"
-    component   = "redis"
-  }
-}
+# Redis module disabled for now
+# module "redis" {
+#   source = "../modules/redis"
+#
+#   project_id      = var.project_id
+#   region          = var.region
+#   redis_name      = "jobhub-redis"
+#   tier            = "BASIC"
+#   memory_size_gb  = 1
+#   redis_version   = "REDIS_7_0"
+#   display_name    = "JobHub Redis for Celery"
+#   
+#   labels = {
+#     environment = var.environment
+#     service     = "backend"
+#     component   = "redis"
+#   }
+# }
